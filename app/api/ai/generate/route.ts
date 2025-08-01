@@ -20,7 +20,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { 
           error: result.error || 'Thema konnte nicht automatisch geladen werden – bitte Thema manuell eingeben.',
-          success: false 
+          success: false,
+          debug: result.debug || null
         },
         { status: 500 }
       );

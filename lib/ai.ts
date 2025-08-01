@@ -7,6 +7,7 @@ export interface AIResponse {
   success: boolean;
   data?: GeneratedCard[];
   error?: string;
+  debug?: any;
 }
 
 /**
@@ -148,6 +149,12 @@ Regeln:
         
         console.log('Validation:', { hasGerman, hasRomanji, hasKana });
         
+        // Wenn kana leer ist, verwende romanji als kana
+        if (hasGerman && hasRomanji && !hasKana) {
+          card.kana = card.romanji;
+          return true;
+        }
+        
         return hasGerman && hasRomanji && hasKana;
       })
       .map(card => ({
@@ -160,9 +167,18 @@ Regeln:
     console.log('Validated cards:', validatedCards);
 
     if (validatedCards.length === 0) {
+      const debugInfo = {
+        rawContent: content,
+        parsedCards: parsedCards,
+        contentLength: content.length
+      };
       console.error('No valid cards found in AI response');
       console.error('Original parsed cards:', parsedCards);
-      throw new Error('Keine gültigen Karten in der AI-Antwort gefunden');
+      return {
+        success: false,
+        error: 'Keine gültigen Karten in der AI-Antwort gefunden',
+        debug: debugInfo
+      };
     }
 
     return {
