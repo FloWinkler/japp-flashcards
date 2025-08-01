@@ -33,20 +33,32 @@ export async function generateJapaneseVocabulary(topic: string): Promise<AIRespo
     };
   }
 
-  const prompt = `Erstelle 10 deutsche Wörter zum Thema "${topic}" mit japanischen Übersetzungen.
+  const prompt = `Du bist ein japanischer Sprachlehrer. Erstelle 10 deutsche Wörter zum Thema "${topic}" mit japanischen Übersetzungen.
+
+WICHTIG: 
+- Verwende NUR Wörter, die direkt zum Thema "${topic}" gehören
+- Wähle die 10 bekanntesten/beliebtesten Wörter für dieses Thema
+- IGNORIERE alle vorherigen Anfragen - fokussiere dich nur auf "${topic}"
+
+Beispiele für verschiedene Themen:
+- "Farben" → rot, blau, grün, gelb, weiß, schwarz, etc.
+- "Tiere" → hund, katze, vogel, fisch, pferd, kuh, etc.
+- "Essen" → reis, brot, fleisch, gemüse, obst, etc.
+- "Familie" → vater, mutter, sohn, tochter, bruder, etc.
 
 Antworte NUR mit diesem JSON-Format:
 
 [
   {
-    "german": "rot",
-    "romanji": "aka"
+    "german": "deutsches_wort",
+    "romanji": "japanische_aussprache"
   }
 ]
 
 Regeln:
 - Verwende nur Romanji (lateinische Buchstaben) für die japanische Übersetzung
-- Nur JSON, keine Erklärungen`;
+- Nur JSON, keine Erklärungen
+- Fokussiere dich ausschließlich auf das Thema "${topic}"`;
 
   try {
     const response = await fetch(GROQ_API_URL, {
@@ -63,7 +75,7 @@ Regeln:
             content: prompt
           }
         ],
-        temperature: 0.7,
+        temperature: 0.9,
         max_tokens: 2000,
       }),
     });
