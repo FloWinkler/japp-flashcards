@@ -55,7 +55,7 @@ export default function GroupPage() {
         return;
       }
 
-      setCards(data || []);
+      setCards((data as Card[]) || []);
     } catch (error) {
       console.error('Error loading cards:', error);
       toast.error('Fehler beim Laden der Karten');
