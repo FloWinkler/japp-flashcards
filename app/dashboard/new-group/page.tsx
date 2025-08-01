@@ -48,18 +48,10 @@ export default function NewGroupPage() {
 
     setGenerating(true);
     try {
-      // Hole Auth Token
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError || !session?.access_token) {
-        toast.error('Nicht authentifiziert');
-        return;
-      }
-
       const response = await fetch('/api/ai/generate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({ topic: topic.trim() }),
       });

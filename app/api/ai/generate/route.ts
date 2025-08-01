@@ -7,37 +7,46 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('API Route called');
+    // Parse Request Body
+    const { topic } = await request.json();
     
-    // Prüfe Authorization Header
-    const authHeader = request.headers.get('authorization');
-    console.log('Auth header:', authHeader ? 'present' : 'missing');
-    
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      console.log('No valid auth header');
+    if (!topic || typeof topic !== 'string') {
       return NextResponse.json(
-        { error: 'Nicht authentifiziert' },
-        { status: 401 }
+        { error: 'Thema ist erforderlich' },
+        { status: 400 }
       );
     }
 
-    const token = authHeader.replace('Bearer ', '');
-    console.log('Token length:', token.length);
-    
-    // Erstelle Supabase Client mit Service Role Key für Server-seitige Authentifizierung
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-    
-    // Validiere Token
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    console.log('Auth result:', { user: !!user, error: authError });
-    
-    if (authError || !user) {
-      console.log('Auth failed:', authError);
+    // Generiere Vokabeln
+    const result = await generateJapaneseVocabulary(topic);
+
+    if (!result.success) {
       return NextResponse.json(
-        { error: 'Nicht authentifiziert' },
-        { status: 401 }
+        { 
+          error: result.error || 'Thema konnte nicht automatisch geladen werden – bitte Thema manuell eingeben.',
+          success: false 
+        },
+        { status: 500 }
       );
     }
+
+    return NextResponse.json({
+      success: true,
+      data: result.data,
+      topic
+    });
+
+  } catch (error) {
+    console.error('AI Generation API Error:', error);
+    return NextResponse.json(
+      { 
+        error: 'Thema konnte nicht automatisch geladen werden – bitte Thema manuell eingeben.',
+        success: false 
+      },
+      { status: 500 }
+    );
+  }
+}
 
     // Parse Request Body
     const { topic } = await request.json();
