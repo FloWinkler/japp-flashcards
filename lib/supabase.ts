@@ -49,10 +49,20 @@ export const getGroups = async (userId: string) => {
     .from('groups')
     .select(`
       *,
-      cards (count)
+      cards!inner(count)
     `)
     .eq('user_id', userId)
     .order('created_at', { ascending: false });
+  
+  // Transformiere die Daten um card_count zu extrahieren
+  if (data) {
+    const transformedData = data.map(group => ({
+      ...group,
+      card_count: group.cards?.[0]?.count || 0
+    }));
+    return { data: transformedData, error };
+  }
+  
   return { data, error };
 };
 

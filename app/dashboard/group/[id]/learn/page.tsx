@@ -22,6 +22,9 @@ export default function LearnPage() {
   const [cards, setCards] = useState<Card[]>([]);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [learningMode, setLearningMode] = useState<LearningMode>('swipe');
+  
+  // Berechne die aktuelle Karte
+  const currentCard = cards[currentCardIndex];
 
 
   const [filters, setFilters] = useState<FilterOptions>({
@@ -121,6 +124,20 @@ export default function LearnPage() {
     } catch (error) {
       console.error('Error updating card progress:', error);
     }
+
+    // Nächste Karte nach kurzer Verzögerung
+    setTimeout(() => {
+      if (currentCardIndex < cards.length - 1) {
+        setCurrentCardIndex(currentCardIndex + 1);
+      } else {
+        // Alle Karten durch
+        toast.success('Alle Karten durchgearbeitet!');
+        setTimeout(() => {
+          setCurrentCardIndex(0);
+          setStats({ correct: 0, wrong: 0, total: cards.length });
+        }, 2000);
+      }
+    }, 1500);
   };
 
   const resetSession = () => {
