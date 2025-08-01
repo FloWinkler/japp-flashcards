@@ -52,11 +52,9 @@ export function katakanaToRomanji(katakana: string): string {
  * Prüft, ob ein Text gültiges Romanji ist
  */
 export function isValidRomanji(text: string): boolean {
-  try {
-    return wanakana.isRomaji(text);
-  } catch (error) {
-    return false;
-  }
+  // Einfache Regex für Romanji (römische Buchstaben, Zahlen, Leerzeichen, Bindestriche)
+  const romanjiRegex = /^[a-zA-Z0-9\s\-']+$/;
+  return romanjiRegex.test(text);
 }
 
 /**
