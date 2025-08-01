@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSwipeable } from 'react-swipeable';
 import { Card } from '@/types';
-import { formatJapaneseText } from '@/utils/japanese';
+
 import { motion, PanInfo } from 'framer-motion';
 
 interface SwipeCardProps {

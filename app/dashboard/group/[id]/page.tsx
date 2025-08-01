@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { getCurrentUser, getCards, deleteCard, updateCardProgress } from '@/lib/supabase';
 import { Card } from '@/types';
-import { formatJapaneseText } from '@/utils/japanese';
+
 import { 
   ArrowLeft, 
   Play, 
@@ -71,9 +71,7 @@ export default function GroupPage() {
     if (searchTerm) {
       filtered = filtered.filter(card =>
         card.german.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        card.romanji.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        card.kana.includes(searchTerm) ||
-        (card.kanji && card.kanji.includes(searchTerm))
+        card.romanji.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -329,15 +327,10 @@ export default function GroupPage() {
                     
                     <div className="japanese-text space-y-1">
                       <p className="text-lg font-semibold text-gray-800">
-                        {formatJapaneseText(card.kana, true)}
-                      </p>
-                      {card.kanji && (
-                        <p className="text-lg font-semibold text-gray-700">
-                          {card.kanji}
-                        </p>
-                      )}
-                      <p className="text-gray-600">
                         {card.romanji}
+                      </p>
+                      <p className="text-gray-600">
+                        Japanische Aussprache
                       </p>
                     </div>
 

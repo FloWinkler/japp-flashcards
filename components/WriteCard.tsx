@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Card } from '@/types';
-import { checkAnswer, formatJapaneseText } from '@/utils/japanese';
+import { checkAnswer } from '@/utils/japanese';
 import { motion } from 'framer-motion';
 
 interface WriteCardProps {
