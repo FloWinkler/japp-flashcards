@@ -34,7 +34,7 @@ export async function generateJapaneseVocabulary(topic: string): Promise<AIRespo
 
   const prompt = `Erstelle 10 deutsche Wörter zum Thema "${topic}" mit japanischen Übersetzungen.
 
-Antworte NUR mit diesem JSON-Format, keine anderen Texte:
+Antworte NUR mit diesem JSON-Format:
 
 [
   {
@@ -128,16 +128,27 @@ Regeln:
       throw new Error('AI-Antwort ist kein Array');
     }
 
+    console.log('=== AI DEBUG START ===');
+    console.log('Raw AI response:', content);
+    console.log('Content length:', content.length);
+    console.log('First 500 chars:', content.substring(0, 500));
+    console.log('Last 500 chars:', content.substring(content.length - 500));
     console.log('Parsed cards:', parsedCards);
+    console.log('=== AI DEBUG END ===');
     
     // Validiere und bereinige die Karten
     const validatedCards: GeneratedCard[] = parsedCards
       .filter(card => {
+        console.log('Checking card:', card);
+        
         // Prüfe ob alle erforderlichen Felder vorhanden sind
-        return card && 
-               typeof card.german === 'string' && card.german.trim() &&
-               typeof card.romanji === 'string' && card.romanji.trim() &&
-               typeof card.kana === 'string' && card.kana.trim();
+        const hasGerman = card && typeof card.german === 'string' && card.german.trim();
+        const hasRomanji = card && typeof card.romanji === 'string' && card.romanji.trim();
+        const hasKana = card && typeof card.kana === 'string' && card.kana.trim();
+        
+        console.log('Validation:', { hasGerman, hasRomanji, hasKana });
+        
+        return hasGerman && hasRomanji && hasKana;
       })
       .map(card => ({
         german: card.german.trim(),
