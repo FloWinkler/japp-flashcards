@@ -3,12 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getCurrentUser, createGroup, createCards } from '@/lib/supabase';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { supabase } from '@/lib/supabase';
 import { GeneratedCard } from '@/types';
 import { Brain, Plus, X, Check, AlertTriangle, Wifi, WifiOff } from 'lucide-react';
 import toast from 'react-hot-toast';
