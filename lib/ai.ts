@@ -129,24 +129,36 @@ Wichtige Regeln:
       throw new Error('AI-Antwort ist kein Array');
     }
 
+    console.log('Parsed cards:', parsedCards);
+    
     // Validiere jedes Element
     const validatedCards: GeneratedCard[] = parsedCards
-      .filter(card => 
-        card.german && 
-        card.romanji && 
-        card.kana &&
-        typeof card.german === 'string' &&
-        typeof card.romanji === 'string' &&
-        typeof card.kana === 'string'
-      )
+      .filter(card => {
+        const isValid = card.german && 
+          card.romanji && 
+          card.kana &&
+          typeof card.german === 'string' &&
+          typeof card.romanji === 'string' &&
+          typeof card.kana === 'string';
+        
+        if (!isValid) {
+          console.log('Invalid card:', card);
+        }
+        
+        return isValid;
+      })
       .map(card => ({
         german: card.german.trim(),
         romanji: card.romanji.trim(),
         kana: card.kana.trim(),
-        kanji: card.kanji?.trim() || undefined
+        kanji: card.kanji?.trim() || null
       }));
 
+    console.log('Validated cards:', validatedCards);
+
     if (validatedCards.length === 0) {
+      console.error('No valid cards found in AI response');
+      console.error('Original parsed cards:', parsedCards);
       throw new Error('Keine gültigen Karten in der AI-Antwort gefunden');
     }
 
