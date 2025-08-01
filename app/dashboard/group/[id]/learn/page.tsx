@@ -224,6 +224,11 @@ export default function LearnPage() {
   const progress = cards.length > 0 ? ((currentCardIndex + 1) / cards.length) * 100 : 0;
   const accuracy = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
 
+  // Debug logs
+  console.log('Cards:', cards);
+  console.log('Current card index:', currentCardIndex);
+  console.log('Current card:', currentCard);
+
   return (
     <div className="max-w-4xl mx-auto">
       {/* Header */}
@@ -355,17 +360,29 @@ export default function LearnPage() {
       {/* Card */}
       <div className="flex justify-center mb-6">
         {learningMode === 'swipe' ? (
-          <SwipeCard
-            card={currentCard}
-            onSwipe={handleSwipe}
-            isActive={true}
-          />
+          currentCard ? (
+            <SwipeCard
+              card={currentCard}
+              onSwipe={handleSwipe}
+              isActive={true}
+            />
+          ) : (
+            <div className="card text-center py-12">
+              <p className="text-gray-600">Lade Karte...</p>
+            </div>
+          )
         ) : (
-          <WriteCard
-            card={currentCard}
-            onAnswer={handleWriteAnswer}
-            isActive={true}
-          />
+          currentCard ? (
+            <WriteCard
+              card={currentCard}
+              onAnswer={handleWriteAnswer}
+              isActive={true}
+            />
+          ) : (
+            <div className="card text-center py-12">
+              <p className="text-gray-600">Lade Karte...</p>
+            </div>
+          )
         )}
       </div>
 
