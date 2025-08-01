@@ -1,11 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateJapaneseVocabulary } from '@/lib/ai';
-import { getCurrentUser } from '@/lib/supabase';
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 export async function POST(request: NextRequest) {
   try {
-    // Prüfe Authentifizierung
-    const { user, error: authError } = await getCurrentUser();
+    // Prüfe Authorization Header
+    const authHeader = request.headers.get('authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return NextResponse.json(
+        { error: 'Nicht authentifiziert' },
+        { status: 401 }
+      );
+    }
+
+    const token = authHeader.replace('Bearer ', '');
+    
+    // Erstelle Supabase Client mit Service Role Key für Server-seitige Authentifizierung
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    
+    // Validiere Token
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Nicht authentifiziert' },

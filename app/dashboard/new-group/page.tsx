@@ -3,6 +3,12 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getCurrentUser, createGroup, createCards } from '@/lib/supabase';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 import { GeneratedCard } from '@/types';
 import { Brain, Plus, X, Check, AlertTriangle, Wifi, WifiOff } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -47,10 +53,18 @@ export default function NewGroupPage() {
 
     setGenerating(true);
     try {
+      // Hole Auth Token
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !session?.access_token) {
+        toast.error('Nicht authentifiziert');
+        return;
+      }
+
       const response = await fetch('/api/ai/generate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({ topic: topic.trim() }),
       });
