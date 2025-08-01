@@ -64,7 +64,7 @@ export default function NewGroupPage() {
 
       setGeneratedCards(result.data);
       // Alle Karten standardmäßig auswählen
-      setSelectedCards(new Set(result.data.map((_, index) => index)));
+      setSelectedCards(new Set(result.data.map((_: any, index: number) => index)));
       toast.success(`${result.data.length} Vokabeln generiert!`);
     } catch (error) {
       console.error('Error generating cards:', error);
