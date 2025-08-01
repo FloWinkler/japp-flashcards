@@ -32,25 +32,24 @@ export async function generateJapaneseVocabulary(topic: string): Promise<AIRespo
     };
   }
 
-  const prompt = `Generiere 10 deutsche Wörter zum Thema "${topic}" mit ihren japanischen Übersetzungen.
+  const prompt = `Erstelle 10 deutsche Wörter zum Thema "${topic}" mit japanischen Übersetzungen.
 
-Antworte NUR mit einem gültigen JSON-Array, keine Erklärungen, keine Markdown-Formatierung:
+Antworte NUR mit diesem JSON-Format, keine anderen Texte:
 
 [
   {
-    "german": "deutsches Wort",
-    "romanji": "japanische Aussprache in lateinischen Buchstaben",
-    "kana": "Hiragana oder Katakana",
-    "kanji": "Kanji (falls vorhanden, sonst null)"
+    "german": "rot",
+    "romanji": "aka", 
+    "kana": "あか",
+    "kanji": "赤"
   }
 ]
 
-Wichtige Regeln:
+Regeln:
 - Verwende Hiragana für japanische Wörter
-- Verwende Katakana für ausländische Wörter
-- Romanji sollte die korrekte japanische Aussprache widerspiegeln
-- Kanji nur angeben, wenn das Wort tatsächlich Kanji verwendet
-- Antworte NUR mit dem JSON-Array, keine zusätzlichen Texte oder Formatierungen`;
+- Verwende Katakana für ausländische Wörter  
+- Kanji nur wenn vorhanden, sonst null
+- Nur JSON, keine Erklärungen`;
 
   try {
     const response = await fetch(GROQ_API_URL, {
@@ -131,27 +130,20 @@ Wichtige Regeln:
 
     console.log('Parsed cards:', parsedCards);
     
-    // Validiere jedes Element
+    // Validiere und bereinige die Karten
     const validatedCards: GeneratedCard[] = parsedCards
       .filter(card => {
-        const isValid = card.german && 
-          card.romanji && 
-          card.kana &&
-          typeof card.german === 'string' &&
-          typeof card.romanji === 'string' &&
-          typeof card.kana === 'string';
-        
-        if (!isValid) {
-          console.log('Invalid card:', card);
-        }
-        
-        return isValid;
+        // Prüfe ob alle erforderlichen Felder vorhanden sind
+        return card && 
+               typeof card.german === 'string' && card.german.trim() &&
+               typeof card.romanji === 'string' && card.romanji.trim() &&
+               typeof card.kana === 'string' && card.kana.trim();
       })
       .map(card => ({
         german: card.german.trim(),
         romanji: card.romanji.trim(),
         kana: card.kana.trim(),
-        kanji: card.kanji?.trim() || undefined
+        kanji: (card.kanji && typeof card.kanji === 'string' && card.kanji.trim()) ? card.kanji.trim() : undefined
       }));
 
     console.log('Validated cards:', validatedCards);
