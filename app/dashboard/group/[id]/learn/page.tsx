@@ -52,11 +52,7 @@ export default function LearnPage() {
         return;
       }
 
-      const { data, error } = await getCards(groupId, {
-        show_hidden: showHidden,
-        show_difficult_only: showDifficultOnly,
-        show_wrong_only: showWrongOnly
-      });
+      const { data, error } = await getCards(groupId, filters);
       if (error) {
         toast.error('Fehler beim Laden der Karten');
         return;
