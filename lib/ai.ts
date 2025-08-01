@@ -105,18 +105,26 @@ Regeln:
       console.error('JSON Parse Error:', parseError);
       console.error('Raw content:', content);
       
-      // Fallback: Versuche das JSON zu reparieren
+      // Fallback: Versuche das JSON direkt zu parsen
       try {
-        const fixedContent = content.replace(/[^\x20-\x7E]/g, ''); // Entferne nicht-ASCII Zeichen
-        const jsonMatch = fixedContent.match(/\[[\s\S]*\]/);
-        if (jsonMatch) {
-          parsedCards = JSON.parse(jsonMatch[0]);
-        } else {
-          throw new Error('Kein JSON-Array gefunden');
+        parsedCards = JSON.parse(content);
+      } catch (directParseError) {
+        console.error('Direct parse error:', directParseError);
+        
+        // Fallback: Versuche das JSON zu reparieren
+        try {
+          // Entferne nur problematische Zeichen, aber behalte Umlaute
+          const fixedContent = content.replace(/[^\x20-\x7E\u00A0-\u00FF]/g, ''); // Behalte Umlaute
+          const jsonMatch = fixedContent.match(/\[[\s\S]*\]/);
+          if (jsonMatch) {
+            parsedCards = JSON.parse(jsonMatch[0]);
+          } else {
+            throw new Error('Kein JSON-Array gefunden');
+          }
+        } catch (fallbackError) {
+          console.error('Fallback parse error:', fallbackError);
+          throw new Error('Ungültiges JSON-Format von der AI erhalten');
         }
-      } catch (fallbackError) {
-        console.error('Fallback parse error:', fallbackError);
-        throw new Error('Ungültiges JSON-Format von der AI erhalten');
       }
     }
 
