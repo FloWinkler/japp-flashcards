@@ -22,8 +22,8 @@ export default function LearnPage() {
   const [cards, setCards] = useState<Card[]>([]);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [learningMode, setLearningMode] = useState<LearningMode>('swipe');
-  const [showKanji, setShowKanji] = useState(true);
-  const [inputType, setInputType] = useState<'romanji' | 'kana'>('romanji');
+
+
   const [filters, setFilters] = useState<FilterOptions>({
     show_hidden: false,
     show_difficult_only: false,
@@ -231,13 +231,7 @@ export default function LearnPage() {
             <Filter className="h-4 w-4 mr-2" />
             Filter
           </button>
-          <button
-            onClick={() => setShowKanji(!showKanji)}
-            className="btn-secondary"
-          >
-            {showKanji ? <Eye className="h-4 w-4 mr-2" /> : <EyeOff className="h-4 w-4 mr-2" />}
-            Kanji
-          </button>
+
           <button
             onClick={resetSession}
             className="btn-secondary"
@@ -340,33 +334,7 @@ export default function LearnPage() {
         </div>
       </div>
 
-      {/* Write Mode Settings */}
-      {learningMode === 'write' && (
-        <div className="flex justify-center mb-6">
-          <div className="bg-gray-100 rounded-lg p-1">
-            <button
-              onClick={() => setInputType('romanji')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                inputType === 'romanji'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              Romanji
-            </button>
-            <button
-              onClick={() => setInputType('kana')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                inputType === 'kana'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              Kana
-            </button>
-          </div>
-        </div>
-      )}
+
 
       {/* Card */}
       <div className="flex justify-center mb-6">
@@ -374,15 +342,12 @@ export default function LearnPage() {
           <SwipeCard
             card={currentCard}
             onSwipe={handleSwipe}
-            showKanji={showKanji}
             isActive={true}
           />
         ) : (
           <WriteCard
             card={currentCard}
             onAnswer={handleWriteAnswer}
-            showKanji={showKanji}
-            inputType={inputType}
             isActive={true}
           />
         )}

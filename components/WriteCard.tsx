@@ -2,22 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import { Card } from '@/types';
-import { checkAnswer } from '@/utils/japanese';
+
 import { motion } from 'framer-motion';
 
 interface WriteCardProps {
   card: Card;
   onAnswer: (correct: boolean) => void;
-  showKanji?: boolean;
-  inputType?: 'romanji' | 'kana';
   isActive?: boolean;
 }
 
 export default function WriteCard({ 
   card, 
   onAnswer, 
-  showKanji = true, 
-  inputType = 'romanji',
   isActive = true 
 }: WriteCardProps) {
   const [userInput, setUserInput] = useState('');
@@ -38,7 +34,7 @@ export default function WriteCard({
     e.preventDefault();
     if (!userInput.trim() || hasAnswered) return;
 
-    const correct = checkAnswer(userInput.trim(), inputType === 'romanji' ? card.romanji : card.kana, inputType);
+    const correct = userInput.trim().toLowerCase() === card.romanji.toLowerCase();
     setIsCorrect(correct);
     setShowAnswer(true);
     setHasAnswered(true);
@@ -53,15 +49,11 @@ export default function WriteCard({
   };
 
   const getInputPlaceholder = () => {
-    if (inputType === 'romanji') {
-      return 'Gib die Aussprache ein (z.B. "aka")';
-    } else {
-      return 'Gib die Kana ein (z.B. "あか")';
-    }
+    return 'Gib die Aussprache ein (z.B. "aka")';
   };
 
   const getCorrectAnswer = () => {
-    return inputType === 'romanji' ? card.romanji : card.kana;
+    return card.romanji;
   };
 
   return (
@@ -77,7 +69,7 @@ export default function WriteCard({
             {card.german}
           </h3>
           <p className="text-sm text-gray-600">
-            {inputType === 'romanji' ? 'Gib die Aussprache ein' : 'Gib die Kana ein'}
+            Gib die Aussprache ein
           </p>
         </div>
 

@@ -9,11 +9,10 @@ import { motion, PanInfo } from 'framer-motion';
 interface SwipeCardProps {
   card: Card;
   onSwipe: (direction: 'left' | 'right', correct: boolean) => void;
-  showKanji?: boolean;
   isActive?: boolean;
 }
 
-export default function SwipeCard({ card, onSwipe, showKanji = true, isActive = true }: SwipeCardProps) {
+export default function SwipeCard({ card, onSwipe, isActive = true }: SwipeCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
   const [dragDirection, setDragDirection] = useState<'left' | 'right' | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);

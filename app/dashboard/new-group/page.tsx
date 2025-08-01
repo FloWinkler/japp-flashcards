@@ -16,7 +16,7 @@ export default function NewGroupPage() {
   const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
-  const [showKanji, setShowKanji] = useState(true);
+
   const router = useRouter();
 
   useEffect(() => {
@@ -257,17 +257,7 @@ export default function NewGroupPage() {
               <h2 className="text-lg font-semibold text-gray-900">
                 Generierte Karten ({selectedCards.size} von {generatedCards.length} ausgewählt)
               </h2>
-              <div className="flex items-center space-x-2">
-                <label className="flex items-center text-sm text-gray-600">
-                  <input
-                    type="checkbox"
-                    checked={showKanji}
-                    onChange={(e) => setShowKanji(e.target.checked)}
-                    className="mr-2"
-                  />
-                  Kanji anzeigen
-                </label>
-              </div>
+
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -297,13 +287,8 @@ export default function NewGroupPage() {
                           <span className="font-medium">Romanji:</span> {card.romanji}
                         </p>
                         <p className="text-sm text-gray-600">
-                          <span className="font-medium">Kana:</span> {card.kana}
+                          <span className="font-medium">Japanische Aussprache:</span> {card.romanji}
                         </p>
-                        {showKanji && card.kanji && (
-                          <p className="text-sm text-gray-600">
-                            <span className="font-medium">Kanji:</span> {card.kanji}
-                          </p>
-                        )}
                       </div>
                     </div>
                     <button

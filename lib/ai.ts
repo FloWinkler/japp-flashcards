@@ -182,48 +182,4 @@ Regeln:
   }
 }
 
-/**
- * Verbessert die Romanji-Aussprache basierend auf der Kana
- */
-export function improveRomanji(kana: string, romanji: string): string {
-  // Einfache Verbesserungen für häufige Fälle
-  let improved = romanji.toLowerCase();
-  
-  // Entferne doppelte Vokale (außer bei langen Vokalen)
-  improved = improved.replace(/([aeiou])\1+/g, '$1');
-  
-  // Korrigiere häufige Fehler
-  improved = improved
-    .replace(/tsu/g, 'tsu')
-    .replace(/shi/g, 'shi')
-    .replace(/chi/g, 'chi')
-    .replace(/ji/g, 'ji')
-    .replace(/zu/g, 'zu')
-    .replace(/fu/g, 'fu');
-  
-  return improved;
-}
-
-/**
- * Prüft, ob ein Wort Kanji verwendet
- */
-export function hasKanji(text: string): boolean {
-  const kanjiRegex = /[\u4e00-\u9faf]/;
-  return kanjiRegex.test(text);
-}
-
-/**
- * Prüft, ob ein Wort nur Hiragana enthält
- */
-export function isHiragana(text: string): boolean {
-  const hiraganaRegex = /^[\u3040-\u309f]+$/;
-  return hiraganaRegex.test(text);
-}
-
-/**
- * Prüft, ob ein Wort nur Katakana enthält
- */
-export function isKatakana(text: string): boolean {
-  const katakanaRegex = /^[\u30a0-\u30ff]+$/;
-  return katakanaRegex.test(text);
-} 
+ 
