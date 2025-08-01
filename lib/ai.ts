@@ -34,7 +34,8 @@ export async function generateJapaneseVocabulary(topic: string): Promise<AIRespo
 
   const prompt = `Generiere 10 deutsche Wörter zum Thema "${topic}" mit ihren japanischen Übersetzungen.
 
-Antworte nur mit einem JSON-Array in folgendem Format:
+Antworte NUR mit einem gültigen JSON-Array, keine Erklärungen, keine Markdown-Formatierung:
+
 [
   {
     "german": "deutsches Wort",
@@ -49,7 +50,7 @@ Wichtige Regeln:
 - Verwende Katakana für ausländische Wörter
 - Romanji sollte die korrekte japanische Aussprache widerspiegeln
 - Kanji nur angeben, wenn das Wort tatsächlich Kanji verwendet
-- Antworte nur mit dem JSON, keine zusätzlichen Erklärungen`;
+- Antworte NUR mit dem JSON-Array, keine zusätzlichen Texte oder Formatierungen`;
 
   try {
     const response = await fetch(GROQ_API_URL, {
@@ -90,13 +91,37 @@ Wichtige Regeln:
     // Versuche JSON zu parsen
     let parsedCards: GeneratedCard[];
     try {
-      // Entferne mögliche Markdown-Code-Blöcke
-      const cleanContent = content.replace(/```json\n?|\n?```/g, '').trim();
+      // Entferne mögliche Markdown-Code-Blöcke und andere Formatierungen
+      let cleanContent = content.replace(/```json\n?|\n?```/g, '').trim();
+      
+      // Entferne mögliche "Hier ist das JSON:" oder ähnliche Texte
+      cleanContent = cleanContent.replace(/^[^{]*/, '');
+      cleanContent = cleanContent.replace(/[^}]*$/, '');
+      
+      // Entferne Kommentare und zusätzliche Zeilen
+      cleanContent = cleanContent.replace(/\/\/.*$/gm, '');
+      cleanContent = cleanContent.replace(/\/\*[\s\S]*?\*\//g, '');
+      
+      console.log('Cleaned content:', cleanContent);
+      
       parsedCards = JSON.parse(cleanContent);
     } catch (parseError) {
       console.error('JSON Parse Error:', parseError);
       console.error('Raw content:', content);
-      throw new Error('Ungültiges JSON-Format von der AI erhalten');
+      
+      // Fallback: Versuche das JSON zu reparieren
+      try {
+        const fixedContent = content.replace(/[^\x20-\x7E]/g, ''); // Entferne nicht-ASCII Zeichen
+        const jsonMatch = fixedContent.match(/\[[\s\S]*\]/);
+        if (jsonMatch) {
+          parsedCards = JSON.parse(jsonMatch[0]);
+        } else {
+          throw new Error('Kein JSON-Array gefunden');
+        }
+      } catch (fallbackError) {
+        console.error('Fallback parse error:', fallbackError);
+        throw new Error('Ungültiges JSON-Format von der AI erhalten');
+      }
     }
 
     // Validiere die Struktur
