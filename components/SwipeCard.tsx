@@ -65,7 +65,7 @@ export default function SwipeCard({ card, onSwipe, isActive = true }: SwipeCardP
   return (
     <motion.div
       ref={cardRef}
-      className="relative w-full max-w-sm mx-auto"
+      className="relative w-full max-w-sm mx-auto h-48 sm:h-64"
       style={{ touchAction: 'none' }}
       drag={isActive ? 'x' : false}
       dragConstraints={{ left: 0, right: 0 }}
@@ -96,7 +96,7 @@ export default function SwipeCard({ card, onSwipe, isActive = true }: SwipeCardP
             : '#e5e7eb',
         }}
       >
-        <div className="relative w-full h-64">
+        <div className="relative w-full h-full">
           {/* Front */}
           <div
             className={`absolute inset-0 flex flex-col items-center justify-center p-6 transition-all duration-300 ${
@@ -105,10 +105,10 @@ export default function SwipeCard({ card, onSwipe, isActive = true }: SwipeCardP
             style={{ backfaceVisibility: 'hidden' }}
           >
             <div className="text-center">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-4">
                 {card.german}
               </h3>
-              <p className="text-sm text-gray-600">
+              <p className="text-xs sm:text-sm text-gray-600">
                 Tippe, um die Antwort zu sehen
               </p>
             </div>
@@ -121,26 +121,26 @@ export default function SwipeCard({ card, onSwipe, isActive = true }: SwipeCardP
             }`}
             style={{ backfaceVisibility: 'hidden' }}
           >
-            <div className="text-center space-y-4">
+            <div className="text-center space-y-2 sm:space-y-4">
               <div className="japanese-text">
-                <p className="text-3xl font-bold text-gray-900 mb-2">
+                <p className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
                   {card.romanji}
                 </p>
                 
               </div>
               
-              <div className="flex justify-center space-x-4 mt-6">
+              <div className="flex justify-center space-x-2 sm:space-x-4 mt-4 sm:mt-6">
                 <button
                   onClick={() => handleSwipe('left')}
-                  className="flex items-center px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors"
+                  className="flex items-center px-2 sm:px-4 py-1 sm:py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors"
                 >
-                  <span className="text-sm font-medium">Falsch</span>
+                  <span className="text-xs sm:text-sm font-medium">Falsch</span>
                 </button>
                 <button
                   onClick={() => handleSwipe('right')}
-                  className="flex items-center px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors"
+                  className="flex items-center px-2 sm:px-4 py-1 sm:py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors"
                 >
-                  <span className="text-sm font-medium">Richtig</span>
+                  <span className="text-xs sm:text-sm font-medium">Richtig</span>
                 </button>
               </div>
             </div>
