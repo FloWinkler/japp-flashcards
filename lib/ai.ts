@@ -151,7 +151,7 @@ Wichtige Regeln:
         german: card.german.trim(),
         romanji: card.romanji.trim(),
         kana: card.kana.trim(),
-        kanji: card.kanji?.trim() || null
+        kanji: card.kanji?.trim() || undefined
       }));
 
     console.log('Validated cards:', validatedCards);
