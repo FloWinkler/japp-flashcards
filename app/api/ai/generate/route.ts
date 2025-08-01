@@ -7,9 +7,14 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('API Route called');
+    
     // Prüfe Authorization Header
     const authHeader = request.headers.get('authorization');
+    console.log('Auth header:', authHeader ? 'present' : 'missing');
+    
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      console.log('No valid auth header');
       return NextResponse.json(
         { error: 'Nicht authentifiziert' },
         { status: 401 }
@@ -17,13 +22,17 @@ export async function POST(request: NextRequest) {
     }
 
     const token = authHeader.replace('Bearer ', '');
+    console.log('Token length:', token.length);
     
     // Erstelle Supabase Client mit Service Role Key für Server-seitige Authentifizierung
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
     
     // Validiere Token
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    console.log('Auth result:', { user: !!user, error: authError });
+    
     if (authError || !user) {
+      console.log('Auth failed:', authError);
       return NextResponse.json(
         { error: 'Nicht authentifiziert' },
         { status: 401 }
