@@ -93,11 +93,6 @@ export default function NewGroupPage() {
       return;
     }
 
-    if (selectedCards.size === 0) {
-      toast.error('Bitte wähle mindestens eine Karte aus');
-      return;
-    }
-
     setLoading(true);
     try {
       const { user, error: userError } = await getCurrentUser();
@@ -105,6 +100,19 @@ export default function NewGroupPage() {
         router.push('/login');
         return;
       }
+
+      // Prüfe auf Duplikate
+      const existingGroups = await getGroups(user.id);
+      if (existingGroups.data?.some(group => group.name.toLowerCase() === groupName.trim().toLowerCase())) {
+        toast.error(`Eine Gruppe mit dem Namen "${groupName.trim()}" existiert bereits. Bitte wähle einen anderen Namen.`);
+        setLoading(false);
+        return;
+      }
+
+    if (selectedCards.size === 0) {
+      toast.error('Bitte wähle mindestens eine Karte aus');
+      return;
+    }
 
       // Erstelle Gruppe
       const { data: group, error: groupError } = await createGroup(groupName.trim(), user.id);
@@ -286,9 +294,7 @@ export default function NewGroupPage() {
                         <p className="text-sm text-gray-600">
                           <span className="font-medium">Romanji:</span> {card.romanji}
                         </p>
-                        <p className="text-sm text-gray-600">
-                          <span className="font-medium">Japanische Aussprache:</span> {card.romanji}
-                        </p>
+
                       </div>
                     </div>
                     <button

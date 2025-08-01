@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { getCurrentUser, getGroups, getLearningStats } from '@/lib/supabase';
+import { getCurrentUser, getGroups, getLearningStats, deleteGroup } from '@/lib/supabase';
 import { Group, LearningStats } from '@/types';
 import Link from 'next/link';
 import { 
@@ -15,7 +15,8 @@ import {
   Calendar,
   CheckCircle,
   XCircle,
-  AlertTriangle
+  AlertTriangle,
+  Trash2
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -23,11 +24,35 @@ export default function DashboardPage() {
   const [groups, setGroups] = useState<Group[]>([]);
   const [stats, setStats] = useState<LearningStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [deletingGroup, setDeletingGroup] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     loadDashboardData();
   }, []);
+
+  const handleDeleteGroup = async (groupId: string, groupName: string) => {
+    if (!confirm(`Möchtest du die Gruppe "${groupName}" wirklich löschen? Alle Karten in dieser Gruppe gehen verloren.`)) {
+      return;
+    }
+
+    setDeletingGroup(groupId);
+    try {
+      const { error } = await deleteGroup(groupId);
+      if (error) {
+        toast.error('Fehler beim Löschen der Gruppe');
+        return;
+      }
+
+      setGroups(prev => prev.filter(group => group.id !== groupId));
+      toast.success(`Gruppe "${groupName}" gelöscht`);
+    } catch (error) {
+      console.error('Error deleting group:', error);
+      toast.error('Fehler beim Löschen der Gruppe');
+    } finally {
+      setDeletingGroup(null);
+    }
+  };
 
   const loadDashboardData = async () => {
     try {
@@ -170,26 +195,43 @@ export default function DashboardPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {groups.slice(0, 6).map((group) => (
-              <Link
-                key={group.id}
-                href={`/dashboard/group/${group.id}`}
-                className="card-hover group"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-medium text-gray-900 group-hover:text-primary-600">
-                      {group.name}
-                    </h3>
-                    <p className="text-sm text-gray-600 mt-1">
-                      {group.card_count || 0} Karten
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      Erstellt am {new Date(group.created_at).toLocaleDateString('de-DE')}
-                    </p>
+              <div key={group.id} className="card-hover group relative">
+                <Link
+                  href={`/dashboard/group/${group.id}`}
+                  className="block"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-medium text-gray-900 group-hover:text-primary-600">
+                        {group.name}
+                      </h3>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {group.card_count || 0} Karten
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Erstellt am {new Date(group.created_at).toLocaleDateString('de-DE')}
+                      </p>
+                    </div>
+                    <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-primary-600 group-hover:translate-x-1 transition-transform" />
                   </div>
-                  <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-primary-600 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </Link>
+                </Link>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleDeleteGroup(group.id, group.name);
+                  }}
+                  disabled={deletingGroup === group.id}
+                  className="absolute top-2 right-2 p-1 text-gray-400 hover:text-red-600 transition-colors disabled:opacity-50"
+                  title="Gruppe löschen"
+                >
+                  {deletingGroup === group.id ? (
+                    <div className="loading-spinner h-4 w-4"></div>
+                  ) : (
+                    <Trash2 className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
             ))}
           </div>
         )}

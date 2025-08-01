@@ -126,9 +126,7 @@ export default function SwipeCard({ card, onSwipe, isActive = true }: SwipeCardP
                 <p className="text-3xl font-bold text-gray-900 mb-2">
                   {card.romanji}
                 </p>
-                <p className="text-lg text-gray-600">
-                  Japanische Aussprache
-                </p>
+                
               </div>
               
               <div className="flex justify-center space-x-4 mt-6">

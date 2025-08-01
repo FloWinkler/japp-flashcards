@@ -329,9 +329,7 @@ export default function GroupPage() {
                       <p className="text-lg font-semibold text-gray-800">
                         {card.romanji}
                       </p>
-                      <p className="text-gray-600">
-                        Japanische Aussprache
-                      </p>
+
                     </div>
 
                     <div className="flex items-center space-x-4 mt-3 text-sm text-gray-500">

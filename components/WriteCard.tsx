@@ -116,9 +116,7 @@ export default function WriteCard({
                   <p className="text-2xl font-bold text-gray-900 mb-1">
                     {card.romanji}
                   </p>
-                  <p className="text-lg text-gray-600">
-                    Japanische Aussprache
-                  </p>
+
                 </div>
 
                 {!isCorrect && (
