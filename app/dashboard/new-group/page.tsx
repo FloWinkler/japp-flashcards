@@ -123,7 +123,8 @@ export default function NewGroupPage() {
 
       // Erstelle ausgewählte Karten
       const selectedCardsArray = Array.from(selectedCards).map(index => ({
-        ...generatedCards[index],
+        german: generatedCards[index].german,
+        romanji: generatedCards[index].romanji,
         group_id: group!.id,
       }));
 
