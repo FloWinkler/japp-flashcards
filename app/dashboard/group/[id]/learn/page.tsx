@@ -58,7 +58,7 @@ export default function LearnPage() {
         return;
       }
 
-      setCards(data || []);
+      setCards((data as Card[]) || []);
       setCurrentCardIndex(0);
       setStats({ correct: 0, wrong: 0, total: data?.length || 0 });
     } catch (error) {
