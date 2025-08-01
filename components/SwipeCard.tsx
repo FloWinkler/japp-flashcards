@@ -99,27 +99,26 @@ export default function SwipeCard({ card, onSwipe, isActive = true }: SwipeCardP
         <div className="relative w-full h-full">
           {/* Front */}
           <div
-            className={`absolute inset-0 flex flex-col items-center justify-center p-6 transition-all duration-300 ${
+            className={`absolute inset-0 flex flex-col items-center justify-center p-6 transition-all duration-300 cursor-pointer ${
               isFlipped ? 'opacity-0 rotate-y-180' : 'opacity-100'
             }`}
             style={{ backfaceVisibility: 'hidden' }}
+            onClick={handleClick}
           >
             <div className="text-center">
               <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-4">
                 {card.german}
               </h3>
-              <p className="text-xs sm:text-sm text-gray-600">
-                Tippe, um die Antwort zu sehen
-              </p>
             </div>
           </div>
 
           {/* Back */}
           <div
-            className={`absolute inset-0 flex flex-col items-center justify-center p-6 transition-all duration-300 ${
+            className={`absolute inset-0 flex flex-col items-center justify-center p-6 transition-all duration-300 cursor-pointer ${
               isFlipped ? 'opacity-100' : 'opacity-0 rotate-y-180'
             }`}
             style={{ backfaceVisibility: 'hidden' }}
+            onClick={handleClick}
           >
             <div className="text-center space-y-2 sm:space-y-4">
               <div className="japanese-text">
@@ -161,17 +160,7 @@ export default function SwipeCard({ card, onSwipe, isActive = true }: SwipeCardP
           </>
         )}
 
-        {/* Click to flip indicator */}
-        {isActive && !isFlipped && (
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
-            <button
-              onClick={handleClick}
-              className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
-            >
-              Tippe zum Umdrehen
-            </button>
-          </div>
-        )}
+
       </div>
     </motion.div>
   );
