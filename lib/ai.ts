@@ -14,9 +14,10 @@ export interface AIResponse {
  */
 export async function generateJapaneseVocabulary(topic: string): Promise<AIResponse> {
   if (!GROQ_API_KEY) {
+    console.error('GROQ_API_KEY nicht gesetzt');
     return {
       success: false,
-      error: 'Groq API Key nicht konfiguriert'
+      error: 'Groq API Key nicht konfiguriert - bitte in Vercel Environment Variables setzen'
     };
   }
 
@@ -68,13 +69,18 @@ Wichtige Regeln:
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorText = await response.text();
+      console.error('Groq API Error:', response.status, errorText);
+      throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
+    console.log('Groq API Response:', data);
+    
     const content = data.choices[0]?.message?.content;
 
     if (!content) {
+      console.error('Keine content in AI response:', data);
       throw new Error('Keine Antwort von der AI erhalten');
     }
 
