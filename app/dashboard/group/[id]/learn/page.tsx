@@ -23,8 +23,7 @@ export default function LearnPage() {
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [learningMode, setLearningMode] = useState<LearningMode>('swipe');
   
-  // Berechne die aktuelle Karte
-  const currentCard = cards[currentCardIndex];
+
 
 
   const [filters, setFilters] = useState<FilterOptions>({
