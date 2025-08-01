@@ -40,7 +40,7 @@ export const createGroup = async (name: string, userId: string) => {
     .insert([{ name, user_id: userId }])
     .select()
     .single();
-  return { data, error };
+  return { data: data as Group | null, error };
 };
 
 export const getGroups = async (userId: string) => {
@@ -126,7 +126,7 @@ export const getCards = async (groupId: string, filters?: {
   }
 
   const { data, error } = await query.order('created_at', { ascending: false });
-  return { data, error };
+  return { data: data as Card[] | null, error };
 };
 
 export const updateCardProgress = async (

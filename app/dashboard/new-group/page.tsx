@@ -115,7 +115,7 @@ export default function NewGroupPage() {
       // Erstelle ausgewählte Karten
       const selectedCardsArray = Array.from(selectedCards).map(index => ({
         ...generatedCards[index],
-        group_id: group.id,
+        group_id: group!.id,
       }));
 
       const { error: cardsError } = await createCards(selectedCardsArray);
@@ -125,7 +125,7 @@ export default function NewGroupPage() {
       }
 
       toast.success(`Gruppe "${groupName}" mit ${selectedCards.size} Karten erstellt!`);
-      router.push(`/dashboard/group/${group.id}`);
+      router.push(`/dashboard/group/${group!.id}`);
     } catch (error) {
       console.error('Error creating group:', error);
       toast.error('Fehler beim Erstellen der Gruppe');
