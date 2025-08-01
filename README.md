@@ -18,7 +18,7 @@ Eine mobile-first Karteikarten-App zum Lernen japanischer Vokabeln mit KI-gestü
 - **Backend**: Supabase (Auth + Database)
 - **KI**: Groq API (LLaMA 3)
 - **Deployment**: Vercel
-- **Konvertierung**: wanakana.js für Romanji ↔ Kana
+- **Konvertierung**: Direkte Romanji-Eingabe
 
 ## Setup
 
@@ -72,8 +72,6 @@ CREATE TABLE cards (
   group_id UUID REFERENCES groups(id) ON DELETE CASCADE,
   german TEXT NOT NULL,
   romanji TEXT NOT NULL,
-  kana TEXT NOT NULL,
-  kanji TEXT,
   correct_count INTEGER DEFAULT 0,
   wrong_count INTEGER DEFAULT 0,
   difficult BOOLEAN DEFAULT FALSE,
