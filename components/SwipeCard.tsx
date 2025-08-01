@@ -139,13 +139,13 @@ export default function SwipeCard({ card, onSwipe, showKanji = true, isActive = 
               
               <div className="flex justify-center space-x-4 mt-6">
                 <button
-                  onClick={() => handleSwipe('left', false)}
+                  onClick={() => handleSwipe('left')}
                   className="flex items-center px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors"
                 >
                   <span className="text-sm font-medium">Falsch</span>
                 </button>
                 <button
-                  onClick={() => handleSwipe('right', true)}
+                  onClick={() => handleSwipe('right')}
                   className="flex items-center px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors"
                 >
                   <span className="text-sm font-medium">Richtig</span>
