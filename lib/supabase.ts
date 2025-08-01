@@ -79,8 +79,6 @@ export const createCard = async (card: {
   group_id: string;
   german: string;
   romanji: string;
-  kana: string;
-  kanji?: string;
 }) => {
   const { data, error } = await supabase
     .from('cards')
@@ -94,8 +92,6 @@ export const createCards = async (cards: Array<{
   group_id: string;
   german: string;
   romanji: string;
-  kana: string;
-  kanji?: string;
 }>) => {
   const { data, error } = await supabase
     .from('cards')

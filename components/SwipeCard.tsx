@@ -125,15 +125,10 @@ export default function SwipeCard({ card, onSwipe, showKanji = true, isActive = 
             <div className="text-center space-y-4">
               <div className="japanese-text">
                 <p className="text-3xl font-bold text-gray-900 mb-2">
-                  {formatJapaneseText(card.kana, showKanji)}
-                </p>
-                {showKanji && card.kanji && (
-                  <p className="text-2xl font-semibold text-gray-700 mb-2">
-                    {card.kanji}
-                  </p>
-                )}
-                <p className="text-lg text-gray-600">
                   {card.romanji}
+                </p>
+                <p className="text-lg text-gray-600">
+                  Japanische Aussprache
                 </p>
               </div>
               

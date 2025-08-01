@@ -122,15 +122,10 @@ export default function WriteCard({
                 
                 <div className="japanese-text mb-4">
                   <p className="text-2xl font-bold text-gray-900 mb-1">
-                    {formatJapaneseText(card.kana, showKanji)}
-                  </p>
-                  {showKanji && card.kanji && (
-                    <p className="text-xl font-semibold text-gray-700 mb-1">
-                      {card.kanji}
-                    </p>
-                  )}
-                  <p className="text-lg text-gray-600">
                     {card.romanji}
+                  </p>
+                  <p className="text-lg text-gray-600">
+                    Japanische Aussprache
                   </p>
                 </div>
 

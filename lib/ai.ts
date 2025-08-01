@@ -40,16 +40,12 @@ Antworte NUR mit diesem JSON-Format:
 [
   {
     "german": "rot",
-    "romanji": "aka", 
-    "kana": "あか",
-    "kanji": "赤"
+    "romanji": "aka"
   }
 ]
 
 Regeln:
-- Verwende Hiragana für japanische Wörter
-- Verwende Katakana für ausländische Wörter  
-- Kanji nur wenn vorhanden, sonst null
+- Verwende nur Romanji (lateinische Buchstaben) für die japanische Übersetzung
 - Nur JSON, keine Erklärungen`;
 
   try {
@@ -145,23 +141,14 @@ Regeln:
         // Prüfe ob alle erforderlichen Felder vorhanden sind
         const hasGerman = card && typeof card.german === 'string' && card.german.trim();
         const hasRomanji = card && typeof card.romanji === 'string' && card.romanji.trim();
-        const hasKana = card && typeof card.kana === 'string' && card.kana.trim();
         
-        console.log('Validation:', { hasGerman, hasRomanji, hasKana });
+        console.log('Validation:', { hasGerman, hasRomanji });
         
-        // Wenn kana leer ist, verwende romanji als kana
-        if (hasGerman && hasRomanji && !hasKana) {
-          card.kana = card.romanji;
-          return true;
-        }
-        
-        return hasGerman && hasRomanji && hasKana;
+        return hasGerman && hasRomanji;
       })
       .map(card => ({
         german: card.german.trim(),
-        romanji: card.romanji.trim(),
-        kana: card.kana.trim(),
-        kanji: (card.kanji && typeof card.kanji === 'string' && card.kanji.trim()) ? card.kanji.trim() : undefined
+        romanji: card.romanji.trim()
       }));
 
     console.log('Validated cards:', validatedCards);

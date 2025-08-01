@@ -18,8 +18,6 @@ export interface Card {
   group_id: string;
   german: string;
   romanji: string;
-  kana: string;
-  kanji?: string;
   correct_count: number;
   wrong_count: number;
   difficult: boolean;
@@ -35,8 +33,6 @@ export interface CardWithGroup extends Card {
 export interface GeneratedCard {
   german: string;
   romanji: string;
-  kana: string;
-  kanji?: string;
 }
 
 export interface LearningStats {

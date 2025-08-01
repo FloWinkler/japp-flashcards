@@ -47,8 +47,6 @@ export interface Database {
           group_id: string
           german: string
           romanji: string
-          kana: string
-          kanji: string | null
           correct_count: number
           wrong_count: number
           difficult: boolean
@@ -61,8 +59,6 @@ export interface Database {
           group_id: string
           german: string
           romanji: string
-          kana: string
-          kanji?: string | null
           correct_count?: number
           wrong_count?: number
           difficult?: boolean
@@ -75,8 +71,6 @@ export interface Database {
           group_id?: string
           german?: string
           romanji?: string
-          kana?: string
-          kanji?: string | null
           correct_count?: number
           wrong_count?: number
           difficult?: boolean
