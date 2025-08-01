@@ -26,7 +26,6 @@ export default function SwipeCard({ card, onSwipe, showKanji = true, isActive = 
   const swipeHandlers = useSwipeable({
     onSwipedLeft: () => handleSwipe('left'),
     onSwipedRight: () => handleSwipe('right'),
-    preventDefaultTouchmoveEvent: true,
     trackMouse: true,
     delta: 50,
     swipeDuration: 500,
