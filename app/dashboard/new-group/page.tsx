@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getCurrentUser, createGroup, createCards } from '@/lib/supabase';
+import { getCurrentUser, createGroup, createCards, getGroups } from '@/lib/supabase';
 import { supabase } from '@/lib/supabase';
 import { GeneratedCard } from '@/types';
 import { Brain, Plus, X, Check, AlertTriangle, Wifi, WifiOff } from 'lucide-react';
