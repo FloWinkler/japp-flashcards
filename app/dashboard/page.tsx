@@ -97,12 +97,9 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600 mt-1">
-          Willkommen zurück! Hier ist eine Übersicht deiner Lernfortschritte.
-        </p>
-      </div>
+              <div>
+          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+        </div>
 
       {/* Stats Grid */}
       {stats && (
@@ -229,41 +226,7 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* Recent Activity */}
-      <div className="card">
-        <h2 className="text-xl font-semibold text-gray-900 mb-6">Letzte Aktivität</h2>
-        <div className="space-y-4">
-          {groups.length === 0 ? (
-            <p className="text-gray-600 text-center py-8">
-              Noch keine Aktivität. Starte mit dem Lernen!
-            </p>
-          ) : (
-            groups.slice(0, 5).map((group) => (
-              <div key={group.id} className="flex items-center space-x-4">
-                <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
-                    <BookOpen className="h-4 w-4 text-primary-600" />
-                  </div>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900">
-                    Gruppe "{group.name}" erstellt
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    {new Date(group.created_at).toLocaleDateString('de-DE', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
-                  </p>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
+
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
