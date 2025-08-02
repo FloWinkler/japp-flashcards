@@ -238,7 +238,7 @@ export default function GroupPage() {
   return (
     <div className="max-w-6xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 space-y-4 sm:space-y-0">
         <div className="flex items-center">
           <button
             onClick={() => router.back()}
@@ -250,27 +250,29 @@ export default function GroupPage() {
           <h1 className="text-2xl font-bold text-gray-900">Gruppe</h1>
         </div>
         
-        <div className="flex items-center space-x-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => setShowAddCard(!showAddCard)}
-            className="btn-secondary"
+            className="btn-secondary text-sm"
           >
-            <Plus className="h-4 w-4 mr-2" />
-            Karte hinzufügen
+            <Plus className="h-4 w-4 mr-1 sm:mr-2" />
+            <span className="hidden sm:inline">Karte hinzufügen</span>
+            <span className="sm:hidden">Hinzufügen</span>
           </button>
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`btn-secondary ${showFilters ? 'bg-primary-100 text-primary-700' : ''}`}
+            className={`btn-secondary text-sm ${showFilters ? 'bg-primary-100 text-primary-700' : ''}`}
           >
-            <Filter className="h-4 w-4 mr-2" />
-            Filter
+            <Filter className="h-4 w-4 mr-1 sm:mr-2" />
+            <span className="hidden sm:inline">Filter</span>
           </button>
           <Link
             href={`/dashboard/group/${groupId}/learn`}
-            className="btn-primary"
+            className="btn-primary text-sm"
           >
-            <Play className="h-4 w-4 mr-2" />
-            Lernen
+            <Play className="h-4 w-4 mr-1 sm:mr-2" />
+            <span className="hidden sm:inline">Lernen</span>
+            <span className="sm:hidden">Start</span>
           </Link>
         </div>
       </div>

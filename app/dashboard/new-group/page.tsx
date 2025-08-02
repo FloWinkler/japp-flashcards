@@ -333,10 +333,9 @@ export default function NewGroupPage() {
             <button
               type="button"
               onClick={() => setShowManualAdd(!showManualAdd)}
-              className="btn-secondary"
+              className="text-gray-400 hover:text-gray-600"
             >
-              <Plus className="h-4 w-4 mr-2" />
-              {showManualAdd ? 'Verstecken' : 'Karte hinzufügen'}
+              {showManualAdd ? <X className="h-5 w-5" /> : <Plus className="h-5 w-5" />}
             </button>
           </div>
 
