@@ -253,33 +253,36 @@ export default function GroupPage() {
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 mb-4">Gruppe: {groupName}</h1>
         
-        <div className="flex items-center space-x-2 mb-3">
+        <div className="grid grid-cols-3 gap-2 mb-3">
           <button
             onClick={() => router.back()}
-            className="btn-secondary"
+            className="btn-secondary text-sm"
           >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Zurück
+            <ArrowLeft className="h-4 w-4 mr-1" />
+            <span className="hidden sm:inline">Zurück</span>
+            <span className="sm:hidden">←</span>
           </button>
           <button
             onClick={() => setShowAddCard(!showAddCard)}
-            className="btn-secondary"
+            className="btn-secondary text-sm"
           >
-            <Plus className="h-4 w-4 mr-2" />
-            Hinzufügen
+            <Plus className="h-4 w-4 mr-1" />
+            <span className="hidden sm:inline">Hinzufügen</span>
+            <span className="sm:hidden">+</span>
           </button>
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`btn-secondary ${showFilters ? 'bg-primary-100 text-primary-700' : ''}`}
+            className={`btn-secondary text-sm ${showFilters ? 'bg-primary-100 text-primary-700' : ''}`}
           >
-            <Filter className="h-4 w-4 mr-2" />
-            Filter
+            <Filter className="h-4 w-4 mr-1" />
+            <span className="hidden sm:inline">Filter</span>
+            <span className="sm:hidden">⚙</span>
           </button>
         </div>
         
         <Link
           href={`/dashboard/group/${groupId}/learn`}
-          className="btn-primary w-full"
+          className="btn-primary w-full text-center"
         >
           <Play className="h-4 w-4 mr-2" />
           Lernen
@@ -367,16 +370,24 @@ export default function GroupPage() {
           <div className="stats-label">Gesamt</div>
         </div>
         <div className="stats-card">
-          <div className="stats-number">{stats.correct}</div>
-          <div className="stats-label">Richtig</div>
-        </div>
-        <div className="stats-card">
-          <div className="stats-number">{stats.wrong}</div>
-          <div className="stats-label">Falsch</div>
+          <div className="flex justify-between items-center">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-600">{stats.correct}</div>
+              <div className="text-sm text-gray-600">Richtig</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-red-600">{stats.wrong}</div>
+              <div className="text-sm text-gray-600">Falsch</div>
+            </div>
+          </div>
         </div>
         <div className="stats-card">
           <div className="stats-number">{stats.difficult}</div>
           <div className="stats-label">Schwierig</div>
+        </div>
+        <div className="stats-card">
+          <div className="stats-number">{stats.hidden}</div>
+          <div className="stats-label">Versteckt</div>
         </div>
       </div>
 
