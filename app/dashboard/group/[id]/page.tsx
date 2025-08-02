@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { getCurrentUser, getCards, deleteCard, updateCardProgress } from '@/lib/supabase';
+import { getCurrentUser, getCards, deleteCard, updateCardProgress, createCard } from '@/lib/supabase';
 import { Card } from '@/types';
 
 import { 
@@ -15,7 +15,8 @@ import {
   EyeOff,
   Target,
   Filter,
-  Search
+  Search,
+  X
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
@@ -29,6 +30,10 @@ export default function GroupPage() {
   const [showDifficultOnly, setShowDifficultOnly] = useState(false);
   const [showWrongOnly, setShowWrongOnly] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [showAddCard, setShowAddCard] = useState(false);
+  const [newCardGerman, setNewCardGerman] = useState('');
+  const [newCardRomanji, setNewCardRomanji] = useState('');
+  const [translating, setTranslating] = useState(false);
   const router = useRouter();
   const params = useParams();
   const groupId = params.id as string;
@@ -147,6 +152,68 @@ export default function GroupPage() {
     }
   };
 
+  const translateWord = async (germanWord: string) => {
+    if (!germanWord.trim()) return;
+    
+    setTranslating(true);
+    try {
+      const response = await fetch('/api/ai/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ topic: germanWord }),
+      });
+
+      const result = await response.json();
+      
+      if (result.success && result.data && result.data.length > 0) {
+        setNewCardRomanji(result.data[0].romanji);
+        toast.success('Übersetzung generiert!');
+      } else {
+        toast.error('Übersetzung konnte nicht generiert werden');
+      }
+    } catch (error) {
+      console.error('Translation error:', error);
+      toast.error('Fehler bei der Übersetzung');
+    } finally {
+      setTranslating(false);
+    }
+  };
+
+  const handleAddCard = async () => {
+    if (!newCardGerman.trim() || !newCardRomanji.trim()) {
+      toast.error('Bitte fülle beide Felder aus');
+      return;
+    }
+
+    try {
+      const { data, error } = await createCard({
+        group_id: groupId,
+        german: newCardGerman.trim(),
+        romanji: newCardRomanji.trim(),
+      });
+
+      if (error) {
+        toast.error('Fehler beim Erstellen der Karte');
+        return;
+      }
+
+      // Neue Karte zur Liste hinzufügen
+      setCards(prev => [data, ...prev]);
+      
+      // Formular zurücksetzen
+      setNewCardGerman('');
+      setNewCardRomanji('');
+      setShowAddCard(false);
+      
+      toast.success('Karte erfolgreich hinzugefügt!');
+    } catch (error) {
+      console.error('Error adding card:', error);
+      toast.error('Fehler beim Erstellen der Karte');
+    }
+  };
+
   const getCardStats = () => {
     const total = cards.length;
     const hidden = cards.filter(card => card.hidden).length;
@@ -184,6 +251,13 @@ export default function GroupPage() {
         
         <div className="flex items-center space-x-2">
           <button
+            onClick={() => setShowAddCard(!showAddCard)}
+            className="btn-secondary"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Karte hinzufügen
+          </button>
+          <button
             onClick={() => setShowFilters(!showFilters)}
             className={`btn-secondary ${showFilters ? 'bg-primary-100 text-primary-700' : ''}`}
           >
@@ -199,6 +273,71 @@ export default function GroupPage() {
           </Link>
         </div>
       </div>
+
+      {/* Add Card Form */}
+      {showAddCard && (
+        <div className="card mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">Neue Karte hinzufügen</h3>
+            <button
+              onClick={() => setShowAddCard(false)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Deutsches Wort
+              </label>
+              <div className="flex space-x-2">
+                <input
+                  type="text"
+                  value={newCardGerman}
+                  onChange={(e) => setNewCardGerman(e.target.value)}
+                  onBlur={() => newCardGerman.trim() && translateWord(newCardGerman)}
+                  className="input-field flex-1"
+                  placeholder="z.B. Haus"
+                />
+                {translating && (
+                  <div className="loading-spinner h-6 w-6"></div>
+                )}
+              </div>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Japanische Übersetzung (Romanji)
+              </label>
+              <input
+                type="text"
+                value={newCardRomanji}
+                onChange={(e) => setNewCardRomanji(e.target.value)}
+                className="input-field"
+                placeholder="z.B. ie"
+              />
+            </div>
+          </div>
+          
+          <div className="flex justify-end space-x-2 mt-4">
+            <button
+              onClick={() => setShowAddCard(false)}
+              className="btn-secondary"
+            >
+              Abbrechen
+            </button>
+            <button
+              onClick={handleAddCard}
+              disabled={!newCardGerman.trim() || !newCardRomanji.trim()}
+              className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Karte hinzufügen
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
