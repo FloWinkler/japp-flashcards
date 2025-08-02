@@ -44,6 +44,15 @@ export const createGroup = async (name: string, userId: string) => {
   return { data: data as Group | null, error };
 };
 
+export const getGroup = async (groupId: string) => {
+  const { data, error } = await supabase
+    .from('groups')
+    .select('*')
+    .eq('id', groupId)
+    .single();
+  return { data, error };
+};
+
 export const getGroups = async (userId: string) => {
   const { data, error } = await supabase
     .from('groups')
