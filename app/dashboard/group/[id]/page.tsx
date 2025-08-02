@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { getCurrentUser, getCards, deleteCard, updateCardProgress, createCard } from '@/lib/supabase';
+import { getCurrentUser, getCards, deleteCard, updateCardProgress, createCard, getGroup } from '@/lib/supabase';
 import { Card } from '@/types';
 
 import { 
@@ -34,6 +34,7 @@ export default function GroupPage() {
   const [newCardGerman, setNewCardGerman] = useState('');
   const [newCardRomanji, setNewCardRomanji] = useState('');
   const [translating, setTranslating] = useState(false);
+  const [groupName, setGroupName] = useState('');
   const router = useRouter();
   const params = useParams();
   const groupId = params.id as string;
@@ -54,13 +55,24 @@ export default function GroupPage() {
         return;
       }
 
-      const { data, error } = await getCards(groupId, { show_hidden: true });
-      if (error) {
+      // Lade Gruppe und Karten parallel
+      const [groupResult, cardsResult] = await Promise.all([
+        getGroup(groupId),
+        getCards(groupId, { show_hidden: true })
+      ]);
+
+      if (groupResult.error) {
+        toast.error('Fehler beim Laden der Gruppe');
+        return;
+      }
+
+      if (cardsResult.error) {
         toast.error('Fehler beim Laden der Karten');
         return;
       }
 
-      setCards((data as Card[]) || []);
+      setGroupName(groupResult.data?.name || '');
+      setCards((cardsResult.data as Card[]) || []);
     } catch (error) {
       console.error('Error loading cards:', error);
       toast.error('Fehler beim Laden der Karten');
@@ -238,43 +250,40 @@ export default function GroupPage() {
   return (
     <div className="max-w-6xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 space-y-4 sm:space-y-0">
-        <div className="flex items-center">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900 mb-4">Gruppe: {groupName}</h1>
+        
+        <div className="flex items-center space-x-2 mb-3">
           <button
             onClick={() => router.back()}
-            className="btn-secondary mr-4"
+            className="btn-secondary"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Zurück
           </button>
-          <h1 className="text-2xl font-bold text-gray-900">Gruppe</h1>
-        </div>
-        
-        <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => setShowAddCard(!showAddCard)}
-            className="btn-secondary text-sm"
+            className="btn-secondary"
           >
-            <Plus className="h-4 w-4 mr-1 sm:mr-2" />
-            <span className="hidden sm:inline">Karte hinzufügen</span>
-            <span className="sm:hidden">Hinzufügen</span>
+            <Plus className="h-4 w-4 mr-2" />
+            Hinzufügen
           </button>
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`btn-secondary text-sm ${showFilters ? 'bg-primary-100 text-primary-700' : ''}`}
+            className={`btn-secondary ${showFilters ? 'bg-primary-100 text-primary-700' : ''}`}
           >
-            <Filter className="h-4 w-4 mr-1 sm:mr-2" />
-            <span className="hidden sm:inline">Filter</span>
+            <Filter className="h-4 w-4 mr-2" />
+            Filter
           </button>
-          <Link
-            href={`/dashboard/group/${groupId}/learn`}
-            className="btn-primary text-sm"
-          >
-            <Play className="h-4 w-4 mr-1 sm:mr-2" />
-            <span className="hidden sm:inline">Lernen</span>
-            <span className="sm:hidden">Start</span>
-          </Link>
         </div>
+        
+        <Link
+          href={`/dashboard/group/${groupId}/learn`}
+          className="btn-primary w-full"
+        >
+          <Play className="h-4 w-4 mr-2" />
+          Lernen
+        </Link>
       </div>
 
       {/* Add Card Form */}
@@ -352,7 +361,7 @@ export default function GroupPage() {
       )}
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <div className="stats-card">
           <div className="stats-number">{stats.total}</div>
           <div className="stats-label">Gesamt</div>
@@ -368,10 +377,6 @@ export default function GroupPage() {
         <div className="stats-card">
           <div className="stats-number">{stats.difficult}</div>
           <div className="stats-label">Schwierig</div>
-        </div>
-        <div className="stats-card">
-          <div className="stats-number">{stats.hidden}</div>
-          <div className="stats-label">Versteckt</div>
         </div>
       </div>
 
