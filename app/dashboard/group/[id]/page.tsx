@@ -200,7 +200,9 @@ export default function GroupPage() {
       }
 
       // Neue Karte zur Liste hinzufügen
-      setCards(prev => [data, ...prev]);
+      if (data) {
+        setCards(prev => [data, ...prev]);
+      }
       
       // Formular zurücksetzen
       setNewCardGerman('');
