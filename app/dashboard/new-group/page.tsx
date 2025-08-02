@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getCurrentUser, createGroup, createCards, getGroups } from '@/lib/supabase';
+import { getCurrentUser, createGroup, createCards, getGroups, createCard } from '@/lib/supabase';
 import { supabase } from '@/lib/supabase';
 import { GeneratedCard } from '@/types';
 import { Brain, Plus, X, Check, AlertTriangle, Wifi, WifiOff } from 'lucide-react';
@@ -16,6 +16,11 @@ export default function NewGroupPage() {
   const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
+  const [showManualAdd, setShowManualAdd] = useState(false);
+  const [manualCards, setManualCards] = useState<Array<{ german: string; romanji: string }>>([]);
+  const [newCardGerman, setNewCardGerman] = useState('');
+  const [newCardRomanji, setNewCardRomanji] = useState('');
+  const [translating, setTranslating] = useState(false);
 
   const router = useRouter();
 
@@ -85,6 +90,55 @@ export default function NewGroupPage() {
     setSelectedCards(newSelected);
   };
 
+  const translateWord = async (germanWord: string) => {
+    if (!germanWord.trim()) return;
+    
+    setTranslating(true);
+    try {
+      const response = await fetch('/api/ai/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ topic: germanWord }),
+      });
+
+      const result = await response.json();
+      
+      if (result.success && result.data && result.data.length > 0) {
+        setNewCardRomanji(result.data[0].romanji);
+        toast.success('Übersetzung generiert!');
+      } else {
+        toast.error('Übersetzung konnte nicht generiert werden');
+      }
+    } catch (error) {
+      console.error('Translation error:', error);
+      toast.error('Fehler bei der Übersetzung');
+    } finally {
+      setTranslating(false);
+    }
+  };
+
+  const addManualCard = () => {
+    if (!newCardGerman.trim() || !newCardRomanji.trim()) {
+      toast.error('Bitte fülle beide Felder aus');
+      return;
+    }
+
+    setManualCards(prev => [...prev, {
+      german: newCardGerman.trim(),
+      romanji: newCardRomanji.trim()
+    }]);
+
+    setNewCardGerman('');
+    setNewCardRomanji('');
+    toast.success('Karte hinzugefügt!');
+  };
+
+  const removeManualCard = (index: number) => {
+    setManualCards(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -109,8 +163,8 @@ export default function NewGroupPage() {
         return;
       }
 
-    if (selectedCards.size === 0) {
-      toast.error('Bitte wähle mindestens eine Karte aus');
+    if (selectedCards.size === 0 && manualCards.length === 0) {
+      toast.error('Bitte wähle mindestens eine Karte aus oder füge manuelle Karten hinzu');
       return;
     }
 
@@ -121,15 +175,22 @@ export default function NewGroupPage() {
         return;
       }
 
-      // Erstelle ausgewählte Karten
-      const selectedCardsArray = Array.from(selectedCards).map(index => ({
-        german: generatedCards[index].german,
-        romanji: generatedCards[index].romanji,
-        group_id: group!.id,
-      }));
+      // Erstelle alle Karten (KI-generierte + manuelle)
+      const allCards = [
+        ...Array.from(selectedCards).map(index => ({
+          german: generatedCards[index].german,
+          romanji: generatedCards[index].romanji,
+          group_id: group!.id,
+        })),
+        ...manualCards.map(card => ({
+          german: card.german,
+          romanji: card.romanji,
+          group_id: group!.id,
+        }))
+      ];
 
-      console.log('Creating cards:', selectedCardsArray);
-      const { data: cardsData, error: cardsError } = await createCards(selectedCardsArray);
+      console.log('Creating cards:', allCards);
+      const { data: cardsData, error: cardsError } = await createCards(allCards);
       if (cardsError) {
         console.error('Cards creation error:', cardsError);
         toast.error(`Fehler beim Erstellen der Karten: ${cardsError.message}`);
@@ -137,7 +198,8 @@ export default function NewGroupPage() {
       }
       console.log('Cards created successfully:', cardsData);
 
-      toast.success(`Gruppe "${groupName}" mit ${selectedCards.size} Karten erstellt!`);
+      const totalCards = selectedCards.size + manualCards.length;
+      toast.success(`Gruppe "${groupName}" mit ${totalCards} Karten erstellt!`);
       router.push(`/dashboard/group/${group!.id}`);
     } catch (error) {
       console.error('Error creating group:', error);
@@ -260,6 +322,97 @@ export default function NewGroupPage() {
               </div>
             )}
           </div>
+        </div>
+
+        {/* Manual Cards */}
+        <div className="card">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">
+              Manuelle Karten ({manualCards.length} hinzugefügt)
+            </h2>
+            <button
+              type="button"
+              onClick={() => setShowManualAdd(!showManualAdd)}
+              className="btn-secondary"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              {showManualAdd ? 'Verstecken' : 'Karte hinzufügen'}
+            </button>
+          </div>
+
+          {showManualAdd && (
+            <div className="border border-gray-200 rounded-lg p-4 mb-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Deutsches Wort
+                  </label>
+                  <div className="flex space-x-2">
+                    <input
+                      type="text"
+                      value={newCardGerman}
+                      onChange={(e) => setNewCardGerman(e.target.value)}
+                      onBlur={() => newCardGerman.trim() && translateWord(newCardGerman)}
+                      className="input-field flex-1"
+                      placeholder="z.B. Haus"
+                    />
+                    {translating && (
+                      <div className="loading-spinner h-6 w-6"></div>
+                    )}
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Japanische Übersetzung (Romanji)
+                  </label>
+                  <input
+                    type="text"
+                    value={newCardRomanji}
+                    onChange={(e) => setNewCardRomanji(e.target.value)}
+                    className="input-field"
+                    placeholder="z.B. ie"
+                  />
+                </div>
+              </div>
+              
+              <div className="flex justify-end mt-4">
+                <button
+                  type="button"
+                  onClick={addManualCard}
+                  disabled={!newCardGerman.trim() || !newCardRomanji.trim()}
+                  className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Karte hinzufügen
+                </button>
+              </div>
+            </div>
+          )}
+
+          {manualCards.length > 0 && (
+            <div className="space-y-2">
+              {manualCards.map((card, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between border border-gray-200 rounded-lg p-3"
+                >
+                  <div className="flex-1">
+                    <div className="font-medium text-gray-900">{card.german}</div>
+                    <div className="text-sm text-gray-600">
+                      <span className="font-medium">Romanji:</span> {card.romanji}
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeManualCard(index)}
+                    className="text-red-400 hover:text-red-600"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Generated Cards */}

@@ -97,20 +97,11 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600 mt-1">
-            Willkommen zurück! Hier ist eine Übersicht deiner Lernfortschritte.
-          </p>
-        </div>
-        <Link
-          href="/dashboard/new-group"
-          className="btn-primary mt-4 sm:mt-0 inline-flex items-center"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Neue Gruppe
-        </Link>
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+        <p className="text-gray-600 mt-1">
+          Willkommen zurück! Hier ist eine Übersicht deiner Lernfortschritte.
+        </p>
       </div>
 
       {/* Stats Grid */}
@@ -172,9 +163,10 @@ export default function DashboardPage() {
           <h2 className="text-xl font-semibold text-gray-900">Deine Gruppen</h2>
           <Link
             href="/dashboard/new-group"
-            className="text-primary-600 hover:text-primary-700 text-sm font-medium"
+            className="btn-primary inline-flex items-center"
           >
-            Alle anzeigen
+            <Plus className="h-4 w-4 mr-2" />
+            Neue Gruppe
           </Link>
         </div>
 
