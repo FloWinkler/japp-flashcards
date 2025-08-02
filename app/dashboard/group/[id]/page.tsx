@@ -204,10 +204,9 @@ export default function GroupPage() {
         setCards(prev => [data, ...prev]);
       }
       
-      // Formular zurücksetzen
+      // Formular zurücksetzen (aber nicht schließen)
       setNewCardGerman('');
       setNewCardRomanji('');
-      setShowAddCard(false);
       
       toast.success('Karte erfolgreich hinzugefügt!');
     } catch (error) {
@@ -325,10 +324,19 @@ export default function GroupPage() {
           
           <div className="flex justify-end space-x-2 mt-4">
             <button
+              onClick={() => {
+                setNewCardGerman('');
+                setNewCardRomanji('');
+              }}
+              className="btn-secondary"
+            >
+              Zurücksetzen
+            </button>
+            <button
               onClick={() => setShowAddCard(false)}
               className="btn-secondary"
             >
-              Abbrechen
+              Schließen
             </button>
             <button
               onClick={handleAddCard}
@@ -422,13 +430,6 @@ export default function GroupPage() {
           <h2 className="text-xl font-semibold text-gray-900">
             Karten ({filteredCards.length} von {cards.length})
           </h2>
-          <Link
-            href={`/dashboard/group/${groupId}/add-card`}
-            className="btn-primary"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Karte hinzufügen
-          </Link>
         </div>
 
         {filteredCards.length === 0 ? (
